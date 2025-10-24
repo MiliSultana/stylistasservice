@@ -9,7 +9,7 @@ export default function Header() {
   const [activeForm, setActiveForm] = useState<"login" | "register" | null>(null);
 
   return (
-    <div className="min-h-screen bg-[#353535] flex flex-col">
+    <div className="font-instrument-serif min-h-screen bg-[#121212] flex flex-col">
       {/* Top Navigation */}
       <header className="flex justify-between items-center px-6 py-4 border-b border-gray-700">
         {/* Logo */}
@@ -47,7 +47,7 @@ export default function Header() {
         {/* Left: Banner Text */}
         <div className="flex-1 text-left text-white ">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Welcome to <span className="text-pink-500">Sevora</span>
+            Welcome to <span className="text-pink-300">Sevora</span>
           </h1>
           <p className="text-gray-300 text-lg md:text-xl max-w-lg">
             Discover beauty that’s truly yours. Login or create your account to explore exclusive offers and products.

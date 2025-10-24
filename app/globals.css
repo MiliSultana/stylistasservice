@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
-
-
-body {
- 
-  font-family: Arial, Helvetica, sans-serif;
+.font-instrument-serif{
+font-family: "Instrument Serif", serif;
 }
+      
+.font-instrument-sans{
+font-family: "Instrument Sans", sans-serif;
+}
+
