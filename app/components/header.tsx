@@ -60,7 +60,7 @@ export default function Header() {
   {activeForm === "register" && <RegisterForm />}
   {!activeForm && (
     <div className="text-gray-400 text-center">
-      Click "Login" or "Register" to continue
+      Click "Login" or "Register" to continue..
     </div>
   )}
 </div>
