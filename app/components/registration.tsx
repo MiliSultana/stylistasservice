@@ -1,47 +1,66 @@
 "use client";
-// // Add this at the top of your RegisterForm.tsx
-// declare global {
-//   interface Window {
-//     validateRegistration: (formId: string) => boolean;
-//   }
-// }
-
 
 import { useEffect } from "react";
+
+//  Add this so TypeScript knows about window.validateRegistration
+declare global {
+  interface Window {
+    validateRegistration: (formId: string) => boolean;
+  }
+}
+
 type RegisterFormProps = {
-  onSwitchToLogin: () => void; // callback to switch to login form
+  onSwitchToLogin: () => void;
 };
 
 export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
-  //  useEffect(() => {
-  //   // dynamically load script.js
-  //   const script = document.createElement("script");
-  //   script.src = "/scripts/script.js";
-  //   script.async = true;
-  //   document.body.appendChild(script);
+  useEffect(() => {
+    //  Dynamically load the script once component mounts
+    const script = document.createElement("script");
+    script.src = "/scripts/script.js"; // Path inside public/
+    script.async = true;
 
-  //   return () => {
-  //     document.body.removeChild(script);
-  //   };
-  // }, []);
+    script.onload = () => {
+      console.log("script.js loaded successfully");
+    };
 
-  // const handleSubmit = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   // call the validation function from script.js
-  //   if (window.validateRegistration("registrationForm")) {
-  //     alert("Registration successful!");
-  //     onSwitchToLogin();
-  //   }
-  // };
-   return (
-   
-    <form className="bg-[#1E1E1E] p-8 rounded-xl w-full max-w-md shadow-lg text-white">
+    script.onerror = () => {
+      console.error(" Failed to load script.js");
+    };
+
+    document.body.appendChild(script);
+
+    // Cleanup on unmount
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  // ✅ Handle submit with validation from script.js
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (window.validateRegistration && window.validateRegistration("registrationForm")) {
+      alert("🎉 Registration successful!");
+      onSwitchToLogin();
+    } else {
+      console.warn(" Validation failed or script not loaded yet");
+    }
+  };
+
+  return (
+    <form
+      id="registrationForm"
+      onSubmit={handleSubmit}
+      className="bg-[#1E1E1E] p-8 rounded-xl w-full max-w-md shadow-lg text-white"
+    >
       <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
 
       {/* Name */}
       <div className="mb-4">
         <label className="block text-gray-300 mb-2 text-sm">Name</label>
-        <input required
+        <input
+          name="name"
           type="text"
           placeholder="Enter your name"
           className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
@@ -51,7 +70,8 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       {/* Email */}
       <div className="mb-4">
         <label className="block text-gray-300 mb-2 text-sm">Email</label>
-        <input required
+        <input
+          name="email"
           type="email"
           placeholder="Enter your email"
           className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
@@ -61,7 +81,8 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       {/* Phone */}
       <div className="mb-4">
         <label className="block text-gray-300 mb-2 text-sm">Phone</label>
-        <input required
+        <input
+          name="phone"
           type="tel"
           placeholder="Enter your phone number"
           className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
@@ -71,7 +92,8 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       {/* Gender */}
       <div className="mb-4">
         <label className="block text-gray-300 mb-2 text-sm">Gender</label>
-        <select required
+        <select
+          name="gender"
           className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
         >
           <option value="">Select your gender</option>
@@ -84,9 +106,20 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
       {/* Password */}
       <div className="mb-6">
         <label className="block text-gray-300 mb-2 text-sm">Password</label>
-        <input required
+        <input
+          name="password"
           type="password"
           placeholder="Create a password"
+          className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
+        />
+      </div>
+       {/* confirm Password */}
+      <div className="mb-6">
+        <label className="block text-gray-300 mb-2 text-sm"> Confirm Password</label>
+        <input
+          name="confirmPassword"
+          type="password"
+          placeholder="Confirm password"
           className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
         />
       </div>
