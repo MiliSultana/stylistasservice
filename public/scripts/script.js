@@ -1,136 +1,192 @@
 // public/scripts/script.js
 
-// ✅ Registration Validation Function
+// Helper: show inline error message below input
+function showError(input, message) {
+  // Remove existing error
+  let existingError = input.parentElement.querySelector(".error-text");
+  if (existingError) existingError.remove();
+
+  // Create and append new error message
+  if (message) {
+    const error = document.createElement("p");
+    error.className = "error-text text-red-500 text-xs mt-1";
+    error.textContent = message;
+    input.parentElement.appendChild(error);
+    input.classList.add("border-red-500");
+  } else {
+    input.classList.remove("border-red-500");
+  }
+}
+
+// Registration Validation Function
 window.validateRegistration = function (formId) {
   const form = document.getElementById(formId);
   if (!form) return false;
 
-  const name = form.querySelector('input[name="name"]').value.trim();
-  const email = form.querySelector('input[name="email"]').value.trim();
-  const phone = form.querySelector('input[name="phone"]').value.trim();
-  const gender = form.querySelector('select[name="gender"]').value;
-  const password = form.querySelector('input[name="password"]').value;
-  const confirmPassword = form.querySelector('input[name="confirmPassword"]').value;
+  const name = form.querySelector('input[name="name"]');
+  const email = form.querySelector('input[name="email"]');
+  const phone = form.querySelector('input[name="phone"]');
+  const gender = form.querySelector('select[name="gender"]');
+  const password = form.querySelector('input[name="password"]');
+  const confirmPassword = form.querySelector('input[name="confirmPassword"]');
 
   let valid = true;
-  let errors = [];
 
-  // ✅ Name validation
-  if (!name) {
+  // Clear all previous errors
+  form.querySelectorAll(".error-text").forEach((e) => e.remove());
+  form.querySelectorAll("input, select").forEach((el) => el.classList.remove("border-red-500"));
+
+  // Name validation
+  if (!name.value.trim()) {
+    showError(name, "Name is required");
     valid = false;
-    errors.push("Name is required");
-  } else if (!/^[A-Za-z\s]{2,}$/.test(name)) {
+  } else if (!/^[A-Za-z\s]{2,}$/.test(name.value.trim())) {
+    showError(name, "Name must contain only letters and be at least 2 characters");
     valid = false;
-    errors.push("Name must contain only letters and be at least 2 characters");
+  } else {
+    showError(name, "");
   }
 
-  // ✅ Email validation
-  if (!email) {
+  // Email validation
+  if (!email.value.trim()) {
+    showError(email, "Email is required");
     valid = false;
-    errors.push("Email is required");
-  } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$/.test(email)) {
+  } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-z]{2,}$/.test(email.value.trim())) {
+    showError(email, "Invalid email address");
     valid = false;
-    errors.push("Invalid email address");
+  } else {
+    showError(email, "");
   }
 
-  // ✅ Phone validation
-  if (!phone) {
+  // Phone validation
+  if (!phone.value.trim()) {
+    showError(phone, "Phone number is required");
     valid = false;
-    errors.push("Phone is required");
-  } else if (!/^\d{10,15}$/.test(phone)) {
+  } else if (!/^\d{10}$/.test(phone.value.trim())) {
+    showError(phone, "Phone number must be 10 digits");
     valid = false;
-    errors.push("Phone number must be 10–15 digits");
+  } else {
+    showError(phone, "");
   }
 
-  // ✅ Gender validation
-  if (!gender) {
+  // Gender validation
+  if (!gender.value) {
+    showError(gender, "Gender is required");
     valid = false;
-    errors.push("Gender is required");
+  } else {
+    showError(gender, "");
   }
 
-  // ✅ Password validation
-  if (!password) {
+  // Password validation
+  if (!password.value) {
+    showError(password, "Password is required");
     valid = false;
-    errors.push("Password is required");
-  } else if (!/(?=.*[a-z])/.test(password)) {
+  } else if (password.value.length < 8) {
+    showError(password, "Password must be at least 8 characters long");
     valid = false;
-    errors.push("Password must contain at least one lowercase letter");
-  } else if (!/(?=.*[A-Z])/.test(password)) {
+  } else if (!/(?=.*[A-Z])/.test(password.value)) {
+    showError(password, "Must include at least one uppercase letter");
     valid = false;
-    errors.push("Password must contain at least one uppercase letter");
-  } else if (!/(?=.*\d)/.test(password)) {
+  } else if (!/(?=.*\d)/.test(password.value)) {
+    showError(password, "Must include at least one number");
     valid = false;
-    errors.push("Password must contain at least one number");
-  } else if (!/(?=.*[!@#$%^&*])/.test(password)) {
+  } else if (!/(?=.*[!@#$%^&*])/.test(password.value)) {
+    showError(password, "Must include at least one special character (!@#$%^&*)");
     valid = false;
-    errors.push("Password must contain at least one special character (!@#$%^&*)");
-  } else if (password.length < 8) {
-    valid = false;
-    errors.push("Password must be at least 8 characters long");
+  } else {
+    showError(password, "");
   }
 
-  // ✅ Confirm Password validation
-  if (!confirmPassword) {
+  // Confirm Password validation
+  if (!confirmPassword.value) {
+    showError(confirmPassword, "Please confirm your password");
     valid = false;
-    errors.push("Please confirm your password");
-  } else if (password !== confirmPassword) {
+  } else if (confirmPassword.value !== password.value) {
+    showError(confirmPassword, "Passwords do not match");
     valid = false;
-    errors.push("Passwords do not match");
+  } else {
+    showError(confirmPassword, "");
   }
 
-  if (!valid) {
-    alert(errors.join("\n"));
-    return false;
-  }
+  // If not valid, stop here
+  if (!valid) return false;
 
-  // ✅ If registration is valid, store user credentials in localStorage
+  // If registration is valid, store user credentials
   localStorage.setItem(
     "user",
     JSON.stringify({
-      name,
-      email,
-      phone,
-      gender,
-      password,
+      name: name.value.trim(),
+      email: email.value.trim(),
+      phone: phone.value.trim(),
+      gender: gender.value,
+      password: password.value,
     })
   );
 
-  alert("✅ Registration successful!");
   return true;
 };
 
-// ✅ Login Validation Function
+
+// LOGIN VALIDATION FUNCTION 
 window.validateLogin = function (formId) {
   const form = document.getElementById(formId);
   if (!form) return false;
 
-  const email = form.querySelector('input[name="email"]').value.trim();
-  const password = form.querySelector('input[name="password"]').value.trim();
+  // Clear old errors
+  const oldErrors = form.querySelectorAll(".error-message");
+  oldErrors.forEach((el) => el.remove());
 
-  let errors = [];
+  const emailField = form.querySelector('input[name="email"]');
+  const passwordField = form.querySelector('input[name="password"]');
+  const email = emailField.value.trim();
+  const password = passwordField.value.trim();
 
-  if (!email) errors.push("Email is required");
-  if (!password) errors.push("Password is required");
+  let valid = true;
 
-  if (errors.length > 0) {
-    alert(errors.join("\n"));
-    return false;
+  // Email validation
+  if (!email) {
+    showFieldError(emailField, "Email is required");
+    valid = false;
   }
 
-  // ✅ Retrieve stored user credentials
+  // Password validation
+  if (!password) {
+    showFieldError(passwordField, "Password is required");
+    valid = false;
+  }
+
+  if (!valid) return false;
+
+  // Retrieve stored user credentials
   const storedUser = JSON.parse(localStorage.getItem("user"));
 
   if (!storedUser) {
-    alert("No user found. Please register first.");
+    showFormError(form, "No user found. Please register first.");
     return false;
   }
 
-  // ✅ Validate credentials
+  // Validate credentials
   if (storedUser.email === email && storedUser.password === password) {
-    alert("🎉 Login successful!");
+    //  Successful login
     return true;
   } else {
-    alert("❌ Invalid email or password");
+    showFormError(form, "Invalid email or password");
     return false;
   }
 };
+
+// Helper function to show field-specific errors
+function showFieldError(inputElement, message) {
+  const error = document.createElement("p");
+  error.className = "error-message text-red-500 text-sm mt-1";
+  error.textContent = message;
+  inputElement.parentElement.appendChild(error);
+}
+
+// Helper function to show form-level errors (for invalid login)
+function showFormError(form, message) {
+  const error = document.createElement("p");
+  error.className = "error-message text-red-500 text-sm mt-3 text-center";
+  error.textContent = message;
+  form.appendChild(error);
+}

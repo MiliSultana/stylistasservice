@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-//  Add this so TypeScript knows about window.validateRegistration
+// Tell TypeScript about the function from window
 declare global {
   interface Window {
     validateRegistration: (formId: string) => boolean;
@@ -14,37 +14,31 @@ type RegisterFormProps = {
 };
 
 export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
+  // Load the external validation script
   useEffect(() => {
-    //  Dynamically load the script once component mounts
     const script = document.createElement("script");
-    script.src = "/scripts/script.js"; // Path inside public/
+    script.src = "/scripts/script.js"; // from public folder
     script.async = true;
-
-    script.onload = () => {
-      console.log("script.js loaded successfully");
-    };
-
-    script.onerror = () => {
-      console.error(" Failed to load script.js");
-    };
-
     document.body.appendChild(script);
 
-    // Cleanup on unmount
     return () => {
       document.body.removeChild(script);
     };
   }, []);
 
-  // ✅ Handle submit with validation from script.js
+  // Handle form submit
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (window.validateRegistration && window.validateRegistration("registrationForm")) {
-      alert("🎉 Registration successful!");
+    const isValid =
+      window.validateRegistration &&
+      window.validateRegistration("registrationForm");
+
+    if (isValid) {
+      alert("Registration successful!");
       onSwitchToLogin();
     } else {
-      console.warn(" Validation failed or script not loaded yet");
+      console.warn("Validation failed. See inline errors.");
     }
   };
 
@@ -113,9 +107,10 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
           className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
         />
       </div>
-       {/* confirm Password */}
+
+      {/* Confirm Password */}
       <div className="mb-6">
-        <label className="block text-gray-300 mb-2 text-sm"> Confirm Password</label>
+        <label className="block text-gray-300 mb-2 text-sm">Confirm Password</label>
         <input
           name="confirmPassword"
           type="password"

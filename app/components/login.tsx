@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect } from "react"; // ✅ You must import this
+import { useEffect } from "react";
 
-// ✅ Declare global window type to avoid TypeScript errors
 declare global {
   interface Window {
     validateLogin: (formId: string) => boolean;
@@ -14,15 +13,11 @@ type LoginFormProps = {
 };
 
 export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
-  // ✅ Load script.js dynamically when component mounts
   useEffect(() => {
+    // Dynamically load the script
     const script = document.createElement("script");
     script.src = "/scripts/script.js";
     script.async = true;
-
-    script.onload = () => console.log("✅ script.js loaded successfully");
-    script.onerror = () => console.error("❌ Failed to load script.js");
-
     document.body.appendChild(script);
 
     return () => {
@@ -30,15 +25,16 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
     };
   }, []);
 
-  // ✅ Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (window.validateLogin && window.validateLogin("loginForm")) {
-      alert("🎉 Login successful!");
-      // You can redirect or update state here
-    } else {
-      console.warn("⚠️ Login validation failed or script not loaded yet");
+    // Run the validation from script.js
+    const valid = window.validateLogin && window.validateLogin("loginForm");
+
+    if (valid) {
+      alert("Login successful!");
+      // Optional: refresh or redirect
+      window.location.reload();
     }
   };
 
@@ -50,25 +46,25 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
     >
       <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
 
-      {/* Email */}
+      {/* Email Field */}
       <div className="mb-4">
         <label className="block text-gray-300 mb-2 text-sm">Email</label>
         <input
           name="email"
           type="email"
           placeholder="Enter your email"
-          className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-pink-400"
+          className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
         />
       </div>
 
-      {/* Password */}
+      {/* Password Field */}
       <div className="mb-6">
         <label className="block text-gray-300 mb-2 text-sm">Password</label>
         <input
           name="password"
           type="password"
           placeholder="Enter your password"
-          className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:ring-2 focus:ring-pink-400"
+          className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
         />
       </div>
 
@@ -80,9 +76,9 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
         Login
       </button>
 
-      {/* Switch to Register */}
+      {/* Link to Register */}
       <p className="mt-4 text-center text-sm text-gray-400">
-        Don’t have an account?{" "}
+        Don't have an account?{" "}
         <button
           type="button"
           onClick={onSwitchToRegister}
