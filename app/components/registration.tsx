@@ -82,6 +82,19 @@ export default function RegisterForm({ onSwitchToLogin }: RegisterFormProps) {
           className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
         />
       </div>
+       {/* Role */}
+      <div className="mb-4">
+        <label className="block text-gray-300 mb-2 text-sm">Role</label>
+        <select
+          name="role"
+          className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
+        >
+          <option value="">Select your role</option>
+          <option value="male">Customer</option>
+          <option value="female">Stylist</option>
+          
+        </select>
+      </div>
 
       {/* Gender */}
       <div className="mb-4">
