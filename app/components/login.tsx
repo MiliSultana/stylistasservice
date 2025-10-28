@@ -53,7 +53,7 @@ export default function LoginForm({ onSwitchToRegister }: LoginFormProps) {
           name="email"
           type="email"
           placeholder="Enter your email"
-          className="w-full p-3 rounded-md bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
+          className="w-full p-3 rounded-md bg-gray-700 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-pink-400"
         />
       </div>
 
